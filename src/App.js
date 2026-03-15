@@ -94,7 +94,7 @@ symptoms,
 stools
 }
 
-const response = await fetch("http://192.168.1.3:5000/analyze",{
+const response = await fetch("http://gutsense-api.onrender.com//analyze",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
