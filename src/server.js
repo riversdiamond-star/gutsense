@@ -7,10 +7,6 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const openai = new OpenAI({
-apiKey: "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"
-})
-
 app.post("/analyze", async (req,res)=>{
 
 const {meals, symptoms, stools} = req.body

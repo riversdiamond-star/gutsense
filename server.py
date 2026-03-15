@@ -5,8 +5,10 @@ from openai import OpenAI
 app = Flask(__name__)
 CORS(app)
 
+import os
+
 client = OpenAI(
-    api_key="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"
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
 @app.route("/analyze", methods=["POST"])
