@@ -15,10 +15,14 @@ const [stoolType,setStoolType] = useState(4)
 const [analysis,setAnalysis] = useState("")
 const [loading,setLoading] = useState(false)
 
-const [meals,setMeals] = useState({
+const [meals,setMeals] = useState(()=>{
+const saved = localStorage.getItem("meals")
+
+return saved ? JSON.parse(saved) : {
 "6-14":[],
 "14-22":[],
 "22-6":[]
+}
 })
 
 const [symptoms,setSymptoms] = useState({
@@ -53,6 +57,7 @@ mealInput
 ]
 
 setMeals(updated)
+localStorage.setItem("meals", JSON.stringify(updated))
 setMealInput("")
 }
 
