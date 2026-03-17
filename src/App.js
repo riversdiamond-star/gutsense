@@ -53,7 +53,10 @@ const updated={...meals}
 
 updated[selectedTime]=[
 ...updated[selectedTime],
-mealInput
+{
+food: mealInput,
+time: new Date().toISOString()
+}
 ]
 
 setMeals(updated)
@@ -67,7 +70,10 @@ const updated={...symptoms}
 
 updated[selectedTime]=[
 ...updated[selectedTime],
-symptomSeverity
+{
+severity: symptomSeverity,
+time: new Date().toISOString()
+}
 ]
 
 setSymptoms(updated)
@@ -175,7 +181,7 @@ return(
 <div>
 
 {meals[time].map((m,i)=>(
-<div key={i}>{m}</div>
+<div key={i}>{m.food}</div>
 ))}
 
 </div>
@@ -191,7 +197,7 @@ return(
 <div>
 
 {symptoms[time].map((s,i)=>(
-<div key={i}>severity {s}</div>
+<div key={i}>severity {s.severity}</div>
 ))}
 
 </div>
