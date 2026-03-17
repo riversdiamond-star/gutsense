@@ -223,16 +223,17 @@ return(
 
 <br/>
 
+<div style={{display:"flex",flexDirection:"column",gap:10}}>
+
 <button onClick={analyzeData}>
 Анализ ИИ
 </button>
 
-<button
-onClick={clearDay}
-style={{marginLeft:10}}
->
+<button onClick={clearDay}>
 Очистить день
 </button>
+
+</div>
 
 <div style={{marginTop:30}}>
 
