@@ -25,16 +25,24 @@ return saved ? JSON.parse(saved) : {
 }
 })
 
-const [symptoms,setSymptoms] = useState({
+const [symptoms,setSymptoms] = useState(()=>{
+const saved = localStorage.getItem("symptoms")
+
+return saved ? JSON.parse(saved) : {
 "6-14":[],
 "14-22":[],
 "22-6":[]
+}
 })
 
-const [stools,setStools] = useState({
+const [stools,setStools] = useState(()=>{
+const saved = localStorage.getItem("stools")
+
+return saved ? JSON.parse(saved) : {
 "6-14":[],
 "14-22":[],
 "22-6":[]
+}
 })
 
 const openModal=(time,type)=>{
@@ -77,6 +85,7 @@ time: new Date().toISOString()
 ]
 
 setSymptoms(updated)
+localStorage.setItem("symptoms", JSON.stringify(updated))
 }
 
 if(modalType==="stool"){
@@ -89,6 +98,7 @@ stoolType
 ]
 
 setStools(updated)
+localStorage.setItem("stools", JSON.stringify(updated))
 }
 
 setShowModal(false)
@@ -145,6 +155,8 @@ setSymptoms(emptySymptoms)
 setStools(emptyStools)
 
 localStorage.removeItem("meals")
+localStorage.removeItem("symptoms")
+localStorage.removeItem("stools")
 
 }
 
