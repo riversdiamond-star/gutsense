@@ -159,6 +159,7 @@ localStorage.removeItem("symptoms")
 localStorage.removeItem("stools")
 
 setAnalysis("")
+setLoading(false)
 
 }
 
