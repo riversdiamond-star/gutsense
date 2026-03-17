@@ -21,7 +21,21 @@ def analyze():
     stools = data.get("stools")
 
     prompt = f"""
-Analyze possible IBS triggers.
+You are an IBS expert.
+
+Analyze the data and return ONLY a short interpretation.
+
+Do NOT show analysis steps.
+Do NOT show tables.
+Do NOT explain reasoning.
+
+Return ONLY:
+
+Possible triggers:
+- food → effect
+
+Safe foods:
+- food
 
 Meals:
 {meals}
@@ -31,8 +45,6 @@ Symptoms:
 
 Stools:
 {stools}
-
-Find correlations between food and symptoms.
 """
 
     response = client.chat.completions.create(
