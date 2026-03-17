@@ -23,15 +23,19 @@ def analyze():
     prompt = f"""
 You are an IBS specialist analyzing a food and symptom diary.
 
-Write a SHORT interpretation (5–7 sentences).
-Do NOT show analysis steps.
-Do NOT show tables.
-Do NOT show "Step 1 / Step 2".
+Write a SHORT interpretation in 4–6 sentences.
+
+Rules:
+- Do NOT write "Possible triggers"
+- Do NOT write "Safe foods"
+- Do NOT use bullet lists
+- Do NOT show steps or analysis
+- Write one short interpretation paragraph
 
 Explain:
-1. Which food is the most likely trigger and why.
-2. Which foods appear safe.
-3. Give a short recommendation.
+• which food is most likely causing symptoms
+• which foods appear safe
+• what the user should monitor next
 
 Meals:
 {meals}
