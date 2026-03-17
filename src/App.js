@@ -158,6 +158,8 @@ localStorage.removeItem("meals")
 localStorage.removeItem("symptoms")
 localStorage.removeItem("stools")
 
+setAnalysis("")
+
 }
 
 return(
