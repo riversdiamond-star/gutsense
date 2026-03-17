@@ -21,21 +21,17 @@ def analyze():
     stools = data.get("stools")
 
     prompt = f"""
-You are an IBS expert.
+You are an IBS specialist analyzing a food and symptom diary.
 
-Analyze the data and return ONLY a short interpretation.
-
+Write a SHORT interpretation (5–7 sentences).
 Do NOT show analysis steps.
 Do NOT show tables.
-Do NOT explain reasoning.
+Do NOT show "Step 1 / Step 2".
 
-Return ONLY:
-
-Possible triggers:
-- food → effect
-
-Safe foods:
-- food
+Explain:
+1. Which food is the most likely trigger and why.
+2. Which foods appear safe.
+3. Give a short recommendation.
 
 Meals:
 {meals}
