@@ -88,7 +88,6 @@ setStools(updated)
 setShowModal(false)
 }
 
-
 const analyzeData = async ()=>{
 
 setLoading(true)
@@ -99,7 +98,7 @@ symptoms,
 stools
 }
 
-const response = await fetch("https://gutsense-api.onrender.com//analyze",{
+const response = await fetch("https://gutsense-api.onrender.com/analyze",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -115,6 +114,33 @@ setLoading(false)
 
 }
 
+const clearDay = () => {
+
+const emptyMeals={
+"6-14":[],
+"14-22":[],
+"22-6":[]
+}
+
+const emptySymptoms={
+"6-14":[],
+"14-22":[],
+"22-6":[]
+}
+
+const emptyStools={
+"6-14":[],
+"14-22":[],
+"22-6":[]
+}
+
+setMeals(emptyMeals)
+setSymptoms(emptySymptoms)
+setStools(emptyStools)
+
+localStorage.removeItem("meals")
+
+}
 
 return(
 
@@ -195,13 +221,18 @@ return(
 
 </table>
 
-
 <br/>
 
 <button onClick={analyzeData}>
 Анализ ИИ
 </button>
 
+<button
+onClick={clearDay}
+style={{marginLeft:10}}
+>
+Очистить день
+</button>
 
 <div style={{marginTop:30}}>
 
@@ -214,8 +245,6 @@ return(
 </pre>
 
 </div>
-
-
 
 {showModal && (
 
