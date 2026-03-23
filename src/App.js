@@ -31,7 +31,7 @@ return saved ? JSON.parse(saved) : []
 })
 
 
-// 🔹 TOGGLE
+// 🔹 TOGGLE (только UI)
 const toggleItem = (item, list, setList)=>{
 if(list.includes(item)){
 setList(list.filter(i=>i!==item))
@@ -73,8 +73,8 @@ time:m.time,
 label:m.food
 }))
 
-const symptomEvents = symptoms.map(()=>({
-time:new Date().toISOString(),
+const symptomEvents = symptoms.map(s=>({
+time:s.time,
 label:"🤕"
 }))
 
@@ -97,6 +97,8 @@ selectedTime
 }]
 setMeals(updated)
 localStorage.setItem("meals", JSON.stringify(updated))
+
+setSelectedTime("now") // 🔥 сброс времени
 }
 
 
@@ -108,6 +110,8 @@ time:getTimeISO(selectedTime)
 }]
 setSymptoms(updated)
 localStorage.setItem("symptoms", JSON.stringify(updated))
+
+setSelectedTime("now") // 🔥 сброс времени
 }
 
 
@@ -119,6 +123,8 @@ time:getTimeISO(selectedTime)
 }]
 setStools(updated)
 localStorage.setItem("stools", JSON.stringify(updated))
+
+setSelectedTime("now") // 🔥 сброс времени
 setShowStoolModal(false)
 }
 
@@ -212,7 +218,7 @@ border:"1px solid #ddd",
 cursor:"pointer"
 }}
 >
-🕒 {selectedTime === "now" ? "Сейчас" : selectedTime} ▼
+🕒 Время: {selectedTime === "now" ? "Сейчас" : selectedTime} ▼
 </div>
 
 
