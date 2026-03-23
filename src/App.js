@@ -31,7 +31,7 @@ return saved ? JSON.parse(saved) : []
 })
 
 
-// 🔹 TOGGLE (только UI)
+// 🔹 TOGGLE
 const toggleItem = (item, list, setList)=>{
 if(list.includes(item)){
 setList(list.filter(i=>i!==item))
@@ -75,7 +75,7 @@ label:m.food
 
 const symptomEvents = symptoms.map(s=>({
 time:s.time,
-label:"🤕"
+label:s.icon // 🔥 теперь правильно
 }))
 
 const stoolEvents = stools.map(s=>({
@@ -98,20 +98,21 @@ selectedTime
 setMeals(updated)
 localStorage.setItem("meals", JSON.stringify(updated))
 
-setSelectedTime("now") // 🔥 сброс времени
+setSelectedTime("now")
 }
 
 
-// 🔹 СИМПТОМЫ
-const addSymptom = (value)=>{
+// 🔹 СИМПТОМЫ (🔥 ОБНОВЛЕНО)
+const addSymptom = (icon, value)=>{
 const updated = [...symptoms,{
+icon,
 severity:value,
 time:getTimeISO(selectedTime)
 }]
 setSymptoms(updated)
 localStorage.setItem("symptoms", JSON.stringify(updated))
 
-setSelectedTime("now") // 🔥 сброс времени
+setSelectedTime("now")
 }
 
 
@@ -124,7 +125,7 @@ time:getTimeISO(selectedTime)
 setStools(updated)
 localStorage.setItem("stools", JSON.stringify(updated))
 
-setSelectedTime("now") // 🔥 сброс времени
+setSelectedTime("now")
 setShowStoolModal(false)
 }
 
@@ -244,7 +245,7 @@ if(s.value==="stool"){
 setShowStoolModal(true)
 } else {
 toggleItem(s.value, selectedSymptoms, setSelectedSymptoms)
-addSymptom(s.value)
+addSymptom(s.icon, s.value) // 🔥 передаём иконку
 }
 }}
 style={{
