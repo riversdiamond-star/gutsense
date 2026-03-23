@@ -9,6 +9,7 @@ const [analysis,setAnalysis] = useState("")
 const [loading,setLoading] = useState(false)
 
 const [showStoolModal,setShowStoolModal] = useState(false)
+const [showTimeModal,setShowTimeModal] = useState(false)
 
 const [meals,setMeals] = useState(()=>{
 const saved = localStorage.getItem("meals")
@@ -26,12 +27,34 @@ return saved ? JSON.parse(saved) : []
 })
 
 
+// 🔹 ВРЕМЯ В ISO
+const getTimeISO = (timeString)=>{
+
+if(timeString === "now"){
+return new Date().toISOString()
+}
+
+const now = new Date()
+const [hours,minutes] = timeString.split(":")
+
+const custom = new Date(
+now.getFullYear(),
+now.getMonth(),
+now.getDate(),
+hours,
+minutes
+)
+
+return custom.toISOString()
+}
+
+
 // 🔹 ЕДА
 const addMeal = (food)=>{
 
 const newItem = {
 food,
-time: new Date().toISOString(),
+time: getTimeISO(selectedTime),
 selectedTime
 }
 
@@ -47,7 +70,7 @@ const addSymptom = (value)=>{
 
 const newItem = {
 severity:value,
-time:new Date().toISOString()
+time:getTimeISO(selectedTime)
 }
 
 const updated = [...symptoms,newItem]
@@ -62,7 +85,7 @@ const addStool = (type)=>{
 
 const newItem = {
 type,
-time:new Date().toISOString()
+time:getTimeISO(selectedTime)
 }
 
 const updated = [...stools,newItem]
@@ -172,24 +195,19 @@ border:"1px solid #ddd"
 />
 
 
-{/* ВРЕМЯ */}
-<p style={{marginTop:10}}>🕒</p>
-
-<select
-value={selectedTime}
-onChange={(e)=>setSelectedTime(e.target.value)}
+{/* 🔥 ВРЕМЯ КНОПКА */}
+<div
+onClick={()=>setShowTimeModal(true)}
 style={{
+marginTop:10,
 padding:12,
-width:"100%",
 borderRadius:10,
-border:"1px solid #ddd"
+border:"1px solid #ddd",
+cursor:"pointer"
 }}
 >
-<option value="now">Сейчас</option>
-<option value="30min">30 мин назад</option>
-<option value="1h">1 час назад</option>
-<option value="2h">2 часа назад</option>
-</select>
+🕒 {selectedTime === "now" ? "Сейчас" : selectedTime} ▼
+</div>
 
 
 {/* СИМПТОМЫ */}
@@ -259,7 +277,91 @@ border:"1px solid #ddd"
 </div>
 
 
-{/* 🔥 BOTTOM SHEET */}
+{/* 🔥 TIME MODAL */}
+{showTimeModal && (
+
+<div style={{
+position:"fixed",
+bottom:0,
+left:0,
+width:"100%",
+background:"white",
+borderTopLeftRadius:20,
+borderTopRightRadius:20,
+padding:20,
+boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
+}}>
+
+<div style={{maxWidth:400,margin:"0 auto"}}>
+
+<h3>Выбери время</h3>
+
+<div style={{display:"flex",flexDirection:"column",gap:12}}>
+
+{["08:00","12:30","15:00","20:00"].map((time,i)=>(
+<div
+key={i}
+onClick={()=>{
+setSelectedTime(time)
+setShowTimeModal(false)
+}}
+style={{
+padding:14,
+borderRadius:12,
+background:"#f2f2f2",
+textAlign:"center",
+cursor:"pointer",
+maxWidth:300,
+margin:"0 auto"
+}}
+>
+{time}
+</div>
+))}
+
+<div
+onClick={()=>{
+setSelectedTime("now")
+setShowTimeModal(false)
+}}
+style={{
+padding:14,
+borderRadius:12,
+background:"#e0e0e0",
+textAlign:"center",
+cursor:"pointer",
+maxWidth:300,
+margin:"0 auto"
+}}
+>
+Сейчас
+</div>
+
+<div
+onClick={()=>setShowTimeModal(false)}
+style={{
+padding:14,
+borderRadius:12,
+background:"#ddd",
+textAlign:"center",
+cursor:"pointer",
+maxWidth:300,
+margin:"0 auto"
+}}
+>
+Отмена
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+)}
+
+
+{/* 🔥 STOOL MODAL */}
 {showStoolModal && (
 
 <div style={{
@@ -274,11 +376,7 @@ padding:20,
 boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
 }}>
 
-<div style={{
-maxWidth:400,
-margin:"0 auto",
-padding:"0 10px"
-}}>
+<div style={{maxWidth:400,margin:"0 auto"}}>
 
 <h3>Какой стул?</h3>
 
@@ -297,9 +395,7 @@ padding:14,
 borderRadius:12,
 background:"#f2f2f2",
 textAlign:"center",
-fontSize:16,
 cursor:"pointer",
-width:"100%",
 maxWidth:300,
 margin:"0 auto"
 }}
@@ -315,9 +411,7 @@ padding:14,
 borderRadius:12,
 background:"#e0e0e0",
 textAlign:"center",
-fontSize:16,
 cursor:"pointer",
-width:"100%",
 maxWidth:300,
 margin:"0 auto"
 }}
