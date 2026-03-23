@@ -40,7 +40,7 @@ localStorage.setItem("meals", JSON.stringify(updated))
 }
 
 
-// 🔹 СИМПТОМЫ (иконки)
+// 🔹 СИМПТОМЫ
 const addSymptom = (value)=>{
 
 const newItem = {
@@ -170,28 +170,28 @@ style={{padding:10,width:"100%"}}
 {/* СИМПТОМЫ */}
 <p style={{marginTop:20}}>Как ты себя чувствуешь?</p>
 
-<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
+<div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10}}>
 
 {[
-{icon:"🤕",value:8},
-{icon:"💨",value:6},
-{icon:"🚽",value:7},
-{icon:"😐",value:3}
+{icon:"🤕",label:"Боль",value:8},
+{icon:"💨",label:"Вздутие",value:6},
+{icon:"🚽",label:"Стул",value:7},
+{icon:"🙂",label:"Ок",value:2}
 ].map((s,i)=>(
 <div
 key={i}
 onClick={()=>addSymptom(s.value)}
 style={{
-padding:15,
+padding:12,
 background:"white",
 borderRadius:10,
 textAlign:"center",
-fontSize:20,
 cursor:"pointer",
 border:"1px solid #ddd"
 }}
 >
-{s.icon}
+<div style={{fontSize:22}}>{s.icon}</div>
+<div style={{fontSize:12,marginTop:5}}>{s.label}</div>
 </div>
 ))}
 
