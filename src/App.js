@@ -10,6 +10,7 @@ const [loading,setLoading] = useState(false)
 
 const [showStoolModal,setShowStoolModal] = useState(false)
 const [showTimeModal,setShowTimeModal] = useState(false)
+const [showFoodModal,setShowFoodModal] = useState(false)
 
 const [meals,setMeals] = useState(()=>{
 const saved = localStorage.getItem("meals")
@@ -27,31 +28,25 @@ return saved ? JSON.parse(saved) : []
 })
 
 
-// 🔹 ВРЕМЯ В ISO
+// 🔹 ВРЕМЯ
 const getTimeISO = (timeString)=>{
-
-if(timeString === "now"){
-return new Date().toISOString()
-}
+if(timeString === "now") return new Date().toISOString()
 
 const now = new Date()
 const [hours,minutes] = timeString.split(":")
 
-const custom = new Date(
+return new Date(
 now.getFullYear(),
 now.getMonth(),
 now.getDate(),
 hours,
 minutes
-)
-
-return custom.toISOString()
+).toISOString()
 }
 
 
 // 🔹 ЕДА
 const addMeal = (food)=>{
-
 const newItem = {
 food,
 time: getTimeISO(selectedTime),
@@ -59,7 +54,6 @@ selectedTime
 }
 
 const updated = [...meals, newItem]
-
 setMeals(updated)
 localStorage.setItem("meals", JSON.stringify(updated))
 }
@@ -67,14 +61,10 @@ localStorage.setItem("meals", JSON.stringify(updated))
 
 // 🔹 СИМПТОМЫ
 const addSymptom = (value)=>{
-
-const newItem = {
+const updated = [...symptoms,{
 severity:value,
 time:getTimeISO(selectedTime)
-}
-
-const updated = [...symptoms,newItem]
-
+}]
 setSymptoms(updated)
 localStorage.setItem("symptoms", JSON.stringify(updated))
 }
@@ -82,51 +72,34 @@ localStorage.setItem("symptoms", JSON.stringify(updated))
 
 // 🔹 СТУЛ
 const addStool = (type)=>{
-
-const newItem = {
+const updated = [...stools,{
 type,
 time:getTimeISO(selectedTime)
-}
-
-const updated = [...stools,newItem]
-
+}]
 setStools(updated)
 localStorage.setItem("stools", JSON.stringify(updated))
-
 setShowStoolModal(false)
 }
 
 
 // 🔹 АНАЛИЗ
 const analyzeData = async ()=>{
-
 setLoading(true)
-
-const data={
-meals,
-symptoms,
-stools
-}
 
 const response = await fetch("https://gutsense-api.onrender.com/analyze",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({meals,symptoms,stools})
 })
 
 const result = await response.json()
-
 setAnalysis(result.analysis)
 setLoading(false)
-
 }
 
 
 // 🔹 ОЧИСТКА
-const clearDay = () => {
-
+const clearDay = ()=>{
 setMeals([])
 setSymptoms([])
 setStools([])
@@ -136,8 +109,6 @@ localStorage.removeItem("symptoms")
 localStorage.removeItem("stools")
 
 setAnalysis("")
-setLoading(false)
-
 }
 
 
@@ -158,7 +129,7 @@ return(
 key={i}
 onClick={()=>{
 if(item === "+"){
-if(mealInput) addMeal(mealInput)
+setShowFoodModal(true)
 } else {
 addMeal(item)
 }
@@ -180,22 +151,7 @@ border:"1px solid #ddd"
 </div>
 
 
-<input
-placeholder="или впиши..."
-value={mealInput}
-onChange={(e)=>setMealInput(e.target.value)}
-style={{
-width:"100%",
-marginTop:10,
-padding:12,
-fontSize:16,
-borderRadius:10,
-border:"1px solid #ddd"
-}}
-/>
-
-
-{/* 🔥 ВРЕМЯ КНОПКА */}
+{/* 🔥 ВРЕМЯ */}
 <div
 onClick={()=>setShowTimeModal(true)}
 style={{
@@ -224,11 +180,8 @@ cursor:"pointer"
 <div
 key={i}
 onClick={()=>{
-if(s.value === "stool"){
-setShowStoolModal(true)
-} else {
-addSymptom(s.value)
-}
+if(s.value==="stool") setShowStoolModal(true)
+else addSymptom(s.value)
 }}
 style={{
 padding:14,
@@ -249,32 +202,83 @@ border:"1px solid #ddd"
 
 {/* КНОПКИ */}
 <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:20}}>
-
-<button onClick={analyzeData}>
-Анализ ИИ
-</button>
-
-<button onClick={clearDay}>
-Очистить день
-</button>
-
+<button onClick={analyzeData}>Анализ ИИ</button>
+<button onClick={clearDay}>Очистить день</button>
 </div>
 
 
 {/* АНАЛИЗ */}
 <div style={{marginTop:30}}>
-
 <h3>Анализ</h3>
-
 {loading && <p>ИИ анализирует ⏳</p>}
+{analysis && <pre style={{whiteSpace:"pre-wrap"}}>{analysis}</pre>}
+</div>
 
-{analysis && (
-<pre style={{whiteSpace:"pre-wrap"}}>
-{analysis}
-</pre>
-)}
+
+{/* 🔥 FOOD MODAL */}
+{showFoodModal && (
+
+<div style={{
+position:"fixed",
+top:0,left:0,width:"100%",height:"100%",
+background:"rgba(0,0,0,0.4)",
+display:"flex",
+justifyContent:"center",
+alignItems:"center"
+}}>
+
+<div style={{
+background:"white",
+padding:20,
+borderRadius:16,
+width:"90%",
+maxWidth:400
+}}>
+
+<h3>Что ты ел?</h3>
+
+<input
+placeholder="Например: суп, паста..."
+value={mealInput}
+onChange={(e)=>setMealInput(e.target.value)}
+style={{
+width:"100%",
+padding:12,
+marginTop:10,
+borderRadius:10,
+border:"1px solid #ddd"
+}}
+/>
+
+<div style={{display:"flex",gap:10,marginTop:15}}>
+
+<button
+onClick={()=>{
+if(mealInput){
+addMeal(mealInput)
+setMealInput("")
+setShowFoodModal(false)
+}
+}}
+style={{flex:1}}
+>
+Сохранить
+</button>
+
+<button
+onClick={()=>setShowFoodModal(false)}
+style={{flex:1}}
+>
+Отмена
+</button>
 
 </div>
+
+</div>
+
+</div>
+
+)}
 
 
 {/* 🔥 TIME MODAL */}
@@ -282,82 +286,31 @@ border:"1px solid #ddd"
 
 <div style={{
 position:"fixed",
-bottom:0,
-left:0,
-width:"100%",
+bottom:0,left:0,width:"100%",
 background:"white",
 borderTopLeftRadius:20,
 borderTopRightRadius:20,
-padding:20,
-boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
+padding:20
 }}>
 
 <div style={{maxWidth:400,margin:"0 auto"}}>
 
 <h3>Выбери время</h3>
 
-<div style={{display:"flex",flexDirection:"column",gap:12}}>
-
-{["08:00","12:30","15:00","20:00"].map((time,i)=>(
-<div
-key={i}
-onClick={()=>{
-setSelectedTime(time)
-setShowTimeModal(false)
-}}
-style={{
-padding:14,
-borderRadius:12,
-background:"#f2f2f2",
-textAlign:"center",
-cursor:"pointer",
-maxWidth:300,
-margin:"0 auto"
-}}
->
-{time}
+{["08:00","12:30","15:00","20:00"].map(t=>(
+<div key={t} onClick={()=>{setSelectedTime(t);setShowTimeModal(false)}}
+style={{padding:14,margin:"10px auto",maxWidth:300,background:"#f2f2f2",borderRadius:12,textAlign:"center"}}>
+{t}
 </div>
 ))}
 
-<div
-onClick={()=>{
-setSelectedTime("now")
-setShowTimeModal(false)
-}}
-style={{
-padding:14,
-borderRadius:12,
-background:"#e0e0e0",
-textAlign:"center",
-cursor:"pointer",
-maxWidth:300,
-margin:"0 auto"
-}}
->
+<div onClick={()=>{setSelectedTime("now");setShowTimeModal(false)}}
+style={{padding:14,margin:"10px auto",maxWidth:300,background:"#e0e0e0",borderRadius:12,textAlign:"center"}}>
 Сейчас
 </div>
 
-<div
-onClick={()=>setShowTimeModal(false)}
-style={{
-padding:14,
-borderRadius:12,
-background:"#ddd",
-textAlign:"center",
-cursor:"pointer",
-maxWidth:300,
-margin:"0 auto"
-}}
->
-Отмена
 </div>
-
 </div>
-
-</div>
-
-</div>
-
 )}
 
 
@@ -366,71 +319,34 @@ margin:"0 auto"
 
 <div style={{
 position:"fixed",
-bottom:0,
-left:0,
-width:"100%",
+bottom:0,left:0,width:"100%",
 background:"white",
 borderTopLeftRadius:20,
 borderTopRightRadius:20,
-padding:20,
-boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
+padding:20
 }}>
 
 <div style={{maxWidth:400,margin:"0 auto"}}>
 
 <h3>Какой стул?</h3>
 
-<div style={{display:"flex",flexDirection:"column",gap:12}}>
-
 {[
 {label:"💧 Жидкий", type:"liquid"},
 {label:"🟤 Нормальный", type:"normal"},
 {label:"🧱 Твёрдый", type:"hard"}
-].map((item,i)=>(
-<div
-key={i}
-onClick={()=>addStool(item.type)}
-style={{
-padding:14,
-borderRadius:12,
-background:"#f2f2f2",
-textAlign:"center",
-cursor:"pointer",
-maxWidth:300,
-margin:"0 auto"
-}}
->
-{item.label}
+].map(i=>(
+<div key={i.type} onClick={()=>addStool(i.type)}
+style={{padding:14,margin:"10px auto",maxWidth:300,background:"#f2f2f2",borderRadius:12,textAlign:"center"}}>
+{i.label}
 </div>
 ))}
 
-<div
-onClick={()=>setShowStoolModal(false)}
-style={{
-padding:14,
-borderRadius:12,
-background:"#e0e0e0",
-textAlign:"center",
-cursor:"pointer",
-maxWidth:300,
-margin:"0 auto"
-}}
->
-Отмена
 </div>
-
 </div>
-
-</div>
-
-</div>
-
 )}
 
 </div>
-
 )
-
 }
 
 export default App
