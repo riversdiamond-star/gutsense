@@ -274,53 +274,39 @@ padding:20,
 boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
 }}>
 
-<div style={{maxWidth:500,margin:"0 auto"}}>
+<div style={{
+maxWidth:400,
+margin:"0 auto",
+padding:"0 10px"
+}}>
 
 <h3>Какой стул?</h3>
 
 <div style={{display:"flex",flexDirection:"column",gap:12}}>
 
+{[
+{label:"💧 Жидкий", type:"liquid"},
+{label:"🟤 Нормальный", type:"normal"},
+{label:"🧱 Твёрдый", type:"hard"}
+].map((item,i)=>(
 <div
-onClick={()=>addStool("liquid")}
+key={i}
+onClick={()=>addStool(item.type)}
 style={{
 padding:14,
 borderRadius:12,
 background:"#f2f2f2",
 textAlign:"center",
 fontSize:16,
-cursor:"pointer"
+cursor:"pointer",
+width:"100%",
+maxWidth:300,
+margin:"0 auto"
 }}
 >
-💧 Жидкий
+{item.label}
 </div>
-
-<div
-onClick={()=>addStool("normal")}
-style={{
-padding:14,
-borderRadius:12,
-background:"#f2f2f2",
-textAlign:"center",
-fontSize:16,
-cursor:"pointer"
-}}
->
-🟤 Нормальный
-</div>
-
-<div
-onClick={()=>addStool("hard")}
-style={{
-padding:14,
-borderRadius:12,
-background:"#f2f2f2",
-textAlign:"center",
-fontSize:16,
-cursor:"pointer"
-}}
->
-🧱 Твёрдый
-</div>
+))}
 
 <div
 onClick={()=>setShowStoolModal(false)}
@@ -330,7 +316,10 @@ borderRadius:12,
 background:"#e0e0e0",
 textAlign:"center",
 fontSize:16,
-cursor:"pointer"
+cursor:"pointer",
+width:"100%",
+maxWidth:300,
+margin:"0 auto"
 }}
 >
 Отмена
