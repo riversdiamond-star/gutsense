@@ -12,7 +12,6 @@ const [showStoolModal,setShowStoolModal] = useState(false)
 const [showTimeModal,setShowTimeModal] = useState(false)
 const [showFoodModal,setShowFoodModal] = useState(false)
 
-// только для UI (подсветка)
 const [selectedMeals,setSelectedMeals] = useState([])
 const [selectedSymptoms,setSelectedSymptoms] = useState([])
 
@@ -32,7 +31,7 @@ return saved ? JSON.parse(saved) : []
 })
 
 
-// 🔹 TOGGLE (только визуально)
+// 🔹 TOGGLE
 const toggleItem = (item, list, setList)=>{
 if(list.includes(item)){
 setList(list.filter(i=>i!==item))
@@ -56,6 +55,36 @@ now.getDate(),
 hours,
 minutes
 ).toISOString()
+}
+
+
+// 🔹 ФОРМАТ ВРЕМЕНИ
+const formatTime = (iso)=>{
+const date = new Date(iso)
+return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+}
+
+
+// 🔹 СОБЫТИЯ
+const getAllEvents = ()=>{
+
+const mealEvents = meals.map(m=>({
+time:m.time,
+label:m.food
+}))
+
+const symptomEvents = symptoms.map(()=>({
+time:new Date().toISOString(),
+label:"🤕"
+}))
+
+const stoolEvents = stools.map(s=>({
+time:s.time,
+label:"🚽"
+}))
+
+return [...mealEvents, ...symptomEvents, ...stoolEvents]
+.sort((a,b)=> new Date(a.time) - new Date(b.time))
 }
 
 
@@ -151,7 +180,7 @@ if(item === "+"){
 setShowFoodModal(true)
 } else {
 toggleItem(item, selectedMeals, setSelectedMeals)
-addMeal(item) // 🔥 сразу сохраняем
+addMeal(item)
 }
 }}
 style={{
@@ -209,7 +238,7 @@ if(s.value==="stool"){
 setShowStoolModal(true)
 } else {
 toggleItem(s.value, selectedSymptoms, setSelectedSymptoms)
-addSymptom(s.value) // 🔥 сразу сохраняем
+addSymptom(s.value)
 }
 }}
 style={{
@@ -234,6 +263,31 @@ border: isSelected ? "2px solid #4fc3f7" : "1px solid #ddd"
 <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:20}}>
 <button onClick={analyzeData}>Анализ ИИ</button>
 <button onClick={clearDay}>Очистить день</button>
+</div>
+
+
+{/* 🔥 ЛЕНТА СОБЫТИЙ */}
+<div style={{marginTop:30}}>
+
+<h3>События</h3>
+
+{getAllEvents().length === 0 && <p>Пока нет записей</p>}
+
+{getAllEvents().map((e,i)=>(
+<div
+key={i}
+style={{
+display:"flex",
+justifyContent:"space-between",
+padding:"8px 0",
+borderBottom:"1px solid #eee"
+}}
+>
+<span>{formatTime(e.time)}</span>
+<span>{e.label}</span>
+</div>
+))}
+
 </div>
 
 
