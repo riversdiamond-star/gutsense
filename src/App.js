@@ -143,7 +143,7 @@ addMeal(item)
 style={{
 padding:15,
 background:"white",
-borderRadius:10,
+borderRadius:12,
 textAlign:"center",
 fontSize:20,
 cursor:"pointer",
@@ -164,8 +164,10 @@ onChange={(e)=>setMealInput(e.target.value)}
 style={{
 width:"100%",
 marginTop:10,
-padding:10,
-fontSize:16
+padding:12,
+fontSize:16,
+borderRadius:10,
+border:"1px solid #ddd"
 }}
 />
 
@@ -176,7 +178,12 @@ fontSize:16
 <select
 value={selectedTime}
 onChange={(e)=>setSelectedTime(e.target.value)}
-style={{padding:10,width:"100%"}}
+style={{
+padding:12,
+width:"100%",
+borderRadius:10,
+border:"1px solid #ddd"
+}}
 >
 <option value="now">Сейчас</option>
 <option value="30min">30 мин назад</option>
@@ -206,16 +213,16 @@ addSymptom(s.value)
 }
 }}
 style={{
-padding:12,
+padding:14,
 background:"white",
-borderRadius:10,
+borderRadius:12,
 textAlign:"center",
 cursor:"pointer",
 border:"1px solid #ddd"
 }}
 >
 <div style={{fontSize:22}}>{s.icon}</div>
-<div style={{fontSize:12,marginTop:5}}>{s.label}</div>
+<div style={{fontSize:13,marginTop:6}}>{s.label}</div>
 </div>
 ))}
 
@@ -267,25 +274,69 @@ padding:20,
 boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
 }}>
 
+<div style={{maxWidth:500,margin:"0 auto"}}>
+
 <h3>Какой стул?</h3>
 
-<div style={{display:"flex",flexDirection:"column",gap:10}}>
+<div style={{display:"flex",flexDirection:"column",gap:12}}>
 
-<button onClick={()=>addStool("liquid")}>
+<div
+onClick={()=>addStool("liquid")}
+style={{
+padding:14,
+borderRadius:12,
+background:"#f2f2f2",
+textAlign:"center",
+fontSize:16,
+cursor:"pointer"
+}}
+>
 💧 Жидкий
-</button>
+</div>
 
-<button onClick={()=>addStool("normal")}>
+<div
+onClick={()=>addStool("normal")}
+style={{
+padding:14,
+borderRadius:12,
+background:"#f2f2f2",
+textAlign:"center",
+fontSize:16,
+cursor:"pointer"
+}}
+>
 🟤 Нормальный
-</button>
+</div>
 
-<button onClick={()=>addStool("hard")}>
+<div
+onClick={()=>addStool("hard")}
+style={{
+padding:14,
+borderRadius:12,
+background:"#f2f2f2",
+textAlign:"center",
+fontSize:16,
+cursor:"pointer"
+}}
+>
 🧱 Твёрдый
-</button>
+</div>
 
-<button onClick={()=>setShowStoolModal(false)}>
+<div
+onClick={()=>setShowStoolModal(false)}
+style={{
+padding:14,
+borderRadius:12,
+background:"#e0e0e0",
+textAlign:"center",
+fontSize:16,
+cursor:"pointer"
+}}
+>
 Отмена
-</button>
+</div>
+
+</div>
 
 </div>
 
