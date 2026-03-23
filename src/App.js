@@ -12,6 +12,10 @@ const [showStoolModal,setShowStoolModal] = useState(false)
 const [showTimeModal,setShowTimeModal] = useState(false)
 const [showFoodModal,setShowFoodModal] = useState(false)
 
+// 🔥 НОВОЕ
+const [selectedMeals,setSelectedMeals] = useState([])
+const [selectedSymptoms,setSelectedSymptoms] = useState([])
+
 const [meals,setMeals] = useState(()=>{
 const saved = localStorage.getItem("meals")
 return saved ? JSON.parse(saved) : []
@@ -26,6 +30,16 @@ const [stools,setStools] = useState(()=>{
 const saved = localStorage.getItem("stools")
 return saved ? JSON.parse(saved) : []
 })
+
+
+// 🔹 TOGGLE
+const toggleItem = (item, list, setList)=>{
+if(list.includes(item)){
+setList(list.filter(i=>i!==item))
+} else {
+setList([...list,item])
+}
+}
 
 
 // 🔹 ВРЕМЯ
@@ -47,13 +61,11 @@ minutes
 
 // 🔹 ЕДА
 const addMeal = (food)=>{
-const newItem = {
+const updated = [...meals,{
 food,
-time: getTimeISO(selectedTime),
+time:getTimeISO(selectedTime),
 selectedTime
-}
-
-const updated = [...meals, newItem]
+}]
 setMeals(updated)
 localStorage.setItem("meals", JSON.stringify(updated))
 }
@@ -82,8 +94,21 @@ setShowStoolModal(false)
 }
 
 
+// 🔹 СОХРАНЕНИЕ ВЫБОРА
+const saveSelections = ()=>{
+selectedMeals.forEach(m=>addMeal(m))
+selectedSymptoms.forEach(s=>addSymptom(s))
+
+setSelectedMeals([])
+setSelectedSymptoms([])
+}
+
+
 // 🔹 АНАЛИЗ
 const analyzeData = async ()=>{
+
+saveSelections()
+
 setLoading(true)
 
 const response = await fetch("https://gutsense-api.onrender.com/analyze",{
@@ -108,6 +133,9 @@ localStorage.removeItem("meals")
 localStorage.removeItem("symptoms")
 localStorage.removeItem("stools")
 
+setSelectedMeals([])
+setSelectedSymptoms([])
+
 setAnalysis("")
 }
 
@@ -124,34 +152,39 @@ return(
 
 <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
 
-{["🍞","🥛","🍗","🥤","🍎","🥗","🍫","+"].map((item,i)=>(
+{["🍞","🥛","🍗","🥤","🍎","🥗","🍫","+"].map((item,i)=>{
+
+const isSelected = selectedMeals.includes(item)
+
+return(
 <div
 key={i}
 onClick={()=>{
 if(item === "+"){
 setShowFoodModal(true)
 } else {
-addMeal(item)
+toggleItem(item, selectedMeals, setSelectedMeals)
 }
 }}
 style={{
 padding:15,
-background:"white",
+background: isSelected ? "#d0f0ff" : "white",
 borderRadius:12,
 textAlign:"center",
 fontSize:20,
 cursor:"pointer",
-border:"1px solid #ddd"
+border: isSelected ? "2px solid #4fc3f7" : "1px solid #ddd"
 }}
 >
 {item}
 </div>
-))}
+)
+})}
 
 </div>
 
 
-{/* 🔥 ВРЕМЯ */}
+{/* ВРЕМЯ */}
 <div
 onClick={()=>setShowTimeModal(true)}
 style={{
@@ -176,26 +209,34 @@ cursor:"pointer"
 {icon:"💨",label:"Вздутие",value:6},
 {icon:"🚽",label:"Стул",value:"stool"},
 {icon:"🙂",label:"Ок",value:2}
-].map((s,i)=>(
+].map((s,i)=>{
+
+const isSelected = selectedSymptoms.includes(s.value)
+
+return(
 <div
 key={i}
 onClick={()=>{
-if(s.value==="stool") setShowStoolModal(true)
-else addSymptom(s.value)
+if(s.value==="stool"){
+setShowStoolModal(true)
+} else {
+toggleItem(s.value, selectedSymptoms, setSelectedSymptoms)
+}
 }}
 style={{
 padding:14,
-background:"white",
+background: isSelected ? "#d0f0ff" : "white",
 borderRadius:12,
 textAlign:"center",
 cursor:"pointer",
-border:"1px solid #ddd"
+border: isSelected ? "2px solid #4fc3f7" : "1px solid #ddd"
 }}
 >
 <div style={{fontSize:22}}>{s.icon}</div>
 <div style={{fontSize:13,marginTop:6}}>{s.label}</div>
 </div>
-))}
+)
+})}
 
 </div>
 
@@ -281,9 +322,8 @@ style={{flex:1}}
 )}
 
 
-{/* 🔥 TIME MODAL */}
+{/* TIME MODAL */}
 {showTimeModal && (
-
 <div style={{
 position:"fixed",
 bottom:0,left:0,width:"100%",
@@ -314,9 +354,8 @@ style={{padding:14,margin:"10px auto",maxWidth:300,background:"#e0e0e0",borderRa
 )}
 
 
-{/* 🔥 STOOL MODAL */}
+{/* STOOL MODAL */}
 {showStoolModal && (
-
 <div style={{
 position:"fixed",
 bottom:0,left:0,width:"100%",
