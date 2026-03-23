@@ -8,6 +8,8 @@ const [selectedTime,setSelectedTime] = useState("now")
 const [analysis,setAnalysis] = useState("")
 const [loading,setLoading] = useState(false)
 
+const [showStoolModal,setShowStoolModal] = useState(false)
+
 const [meals,setMeals] = useState(()=>{
 const saved = localStorage.getItem("meals")
 return saved ? JSON.parse(saved) : []
@@ -24,7 +26,7 @@ return saved ? JSON.parse(saved) : []
 })
 
 
-// 🔹 ДОБАВЛЕНИЕ ЕДЫ
+// 🔹 ЕДА
 const addMeal = (food)=>{
 
 const newItem = {
@@ -52,6 +54,23 @@ const updated = [...symptoms,newItem]
 
 setSymptoms(updated)
 localStorage.setItem("symptoms", JSON.stringify(updated))
+}
+
+
+// 🔹 СТУЛ
+const addStool = (type)=>{
+
+const newItem = {
+type,
+time:new Date().toISOString()
+}
+
+const updated = [...stools,newItem]
+
+setStools(updated)
+localStorage.setItem("stools", JSON.stringify(updated))
+
+setShowStoolModal(false)
 }
 
 
@@ -138,7 +157,6 @@ border:"1px solid #ddd"
 </div>
 
 
-{/* ВВОД */}
 <input
 placeholder="или впиши..."
 value={mealInput}
@@ -175,12 +193,18 @@ style={{padding:10,width:"100%"}}
 {[
 {icon:"🤕",label:"Боль",value:8},
 {icon:"💨",label:"Вздутие",value:6},
-{icon:"🚽",label:"Стул",value:7},
+{icon:"🚽",label:"Стул",value:"stool"},
 {icon:"🙂",label:"Ок",value:2}
 ].map((s,i)=>(
 <div
 key={i}
-onClick={()=>addSymptom(s.value)}
+onClick={()=>{
+if(s.value === "stool"){
+setShowStoolModal(true)
+} else {
+addSymptom(s.value)
+}
+}}
 style={{
 padding:12,
 background:"white",
@@ -226,6 +250,48 @@ border:"1px solid #ddd"
 )}
 
 </div>
+
+
+{/* 🔥 BOTTOM SHEET */}
+{showStoolModal && (
+
+<div style={{
+position:"fixed",
+bottom:0,
+left:0,
+width:"100%",
+background:"white",
+borderTopLeftRadius:20,
+borderTopRightRadius:20,
+padding:20,
+boxShadow:"0 -2px 10px rgba(0,0,0,0.2)"
+}}>
+
+<h3>Какой стул?</h3>
+
+<div style={{display:"flex",flexDirection:"column",gap:10}}>
+
+<button onClick={()=>addStool("liquid")}>
+💧 Жидкий
+</button>
+
+<button onClick={()=>addStool("normal")}>
+🟤 Нормальный
+</button>
+
+<button onClick={()=>addStool("hard")}>
+🧱 Твёрдый
+</button>
+
+<button onClick={()=>setShowStoolModal(false)}>
+Отмена
+</button>
+
+</div>
+
+</div>
+
+)}
 
 </div>
 
